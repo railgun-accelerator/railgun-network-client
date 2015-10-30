@@ -1,0 +1,19 @@
+{
+  "name": "railgun-network-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/railgun-accelerator/railgun-network-client.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/railgun-accelerator/railgun-network-client/issues"
+  },
+  "homepage": "https://github.com/railgun-accelerator/railgun-network-client#readme",
+  "dependencies": {
+    "pg": "^4.4.3"
+  }
+}
