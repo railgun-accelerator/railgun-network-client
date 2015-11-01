@@ -1,0 +1,9 @@
+[Service]
+Type=oneshot
+ExecStart=/srv/railgun/network/start.sh
+EnvironmentFile=/etc/railgun/profile
+WorkingDirectory=/srv/railgun/network
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
