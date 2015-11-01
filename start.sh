@@ -2,6 +2,10 @@
 
 set -o errexit
 
+echo 'modprobe fou...'
+
+modprobe fou
+
 echo 'ipset...'
 
 ipset create -exist ports1 bitmap:port range 10000-32767
