@@ -23,20 +23,34 @@ module.exports =
     ipforce = []
     iptables = {nat: [], mangle: [], filter: []}
 
-    ipforce.push "rule del pref 200 fwmark 0x1 lookup 200"
-    ipforce.push "rule del pref 400 to #{servers[server_id].network} lookup main"
-    ipforce.push "rule del pref 401 tos 4 lookup 100"
-    ipforce.push "rule del pref 402 iif lo lookup main"
-    ipforce.push "rule del pref 403 to 10.0.0.0/8 lookup 100"
 
-    ip.push "rule add pref 200 fwmark 0x1 lookup 200"
-    ip.push "rule add pref 400 to #{servers[server_id].network} lookup main" # 到自己 VPN 内网, 不进行路由
-    ip.push "rule add pref 401 tos 4 lookup 100" # 源站选路
-    ip.push "rule add pref 402 iif lo lookup main" # 除源站选路外, 本机发出的其他报文, 不进行路由
-    ip.push "rule add pref 403 to 10.0.0.0/8 lookup 100" # 转发报文
+    # fwmark 0x1 / 本机发出 tos 0x4 源站选路
+    # fwmark 0x2 连接保持
+    # fwmark 0x3 TPROXY
 
-    ip.push "route replace local default dev lo table 200"
-    ip.push "route flush table 100"
+    # table 101 源站选路
+    # table 102 连接保持
+    # table 103 TPROXY
+
+    ipforce.push "rule del pref 200"
+    ipforce.push "rule del pref 400"
+    ipforce.push "rule del pref 401"
+    ipforce.push "rule del pref 402"
+    ipforce.push "rule del pref 403"
+    ipforce.push "rule del pref 404"
+    ipforce.push "rule del pref 405"
+
+    ip.push "rule add pref 200 fwmark 0x3 lookup 103" # TPROXY
+    ip.push "rule add pref 400 to #{servers[server_id].network} lookup main" # 到自己 VPN 内网
+    ip.push "rule add pref 401 fwmark 0x2 lookup 102" # 连接保持
+    ip.push "rule add pref 402 fwmark 0x1 lookup 101" # 源站选路
+    ip.push "rule add pref 403 iif lo tos 4 lookup 101" # 源站选路
+    ip.push "rule add pref 404 iif lo lookup main" # 除源站选路外, 本机发出的其他报文, 不进行路由
+    ip.push "rule add pref 405 to 10.0.0.0/8 lookup 101" # 其他转发至内网的报文
+
+    ip.push "route flush table 101"
+    ip.push "route flush table 102"
+    ip.push "route replace local default dev lo table 103"
 
     #console.log servers
     for i, server of servers when server.id != server_id
@@ -70,23 +84,25 @@ module.exports =
 
       # 可达节点的路由
       if server.next_hop?
-        ip.push "route replace #{server.network} dev railgun#{server.next_hop} src #{servers[server_id].host} table 100"
-        ip.push "route replace tos #{server.tos} default dev railgun#{server.next_hop} src #{servers[server_id].host}" if server.tos?
+        ip.push "route replace #{server.network} dev railgun#{server.next_hop} src #{servers[server_id].host} table 101"
+        ip.push "route replace tos #{server.tos} default dev railgun#{server.next_hop} src #{servers[server_id].host} table 102" if server.tos?
 
 
       # 连接保持
       if server.tos?
         iptables.mangle.push "-A FORWARD -m connmark --mark 0 -m realm --realm #{server.id} -j CONNMARK --set-mark #{server.id}"
         iptables.mangle.push "-A FORWARD -m connmark --mark #{server.id} -j TOS --set-tos #{server.tos}"
+        iptables.mangle.push "-A FORWARD -m connmark --mark #{server.id} -j MARK --set-mark 0x2"
         iptables.mangle.push "-A OUTPUT -m connmark --mark 0 -m realm --realm #{server.id} -j CONNMARK --set-mark #{server.id}"
         iptables.mangle.push "-A OUTPUT -m connmark --mark #{server.id} -j TOS --set-tos #{server.tos}"
+        iptables.mangle.push "-A OUTPUT -m connmark --mark #{server.id} -j MARK --set-mark 0x2"
 
     for i, region of regions when region.gateway?
       for address in region.addresses
         if region.gateway == server_id
-          ip.push "route add #{address} via #{process.env.RAILGUN_GATEWAY} table 100"
+          ip.push "route add #{address} via #{process.env.RAILGUN_GATEWAY} table 101"
         else
-          ip.push "route add #{address} advmss 1360 dev railgun#{servers[region.gateway].next_hop} src #{servers[server_id].host} realm #{region.gateway} table 100"
+          ip.push "route add #{address} advmss 1360 dev railgun#{servers[region.gateway].next_hop} src #{servers[server_id].host} realm #{region.gateway} table 101"
 
     #console.log ipforce.join("\n")
     #console.log '-'
