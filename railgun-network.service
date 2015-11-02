@@ -1,3 +1,7 @@
+[Unit]
+Wants=network-online.target
+After=network-online.target
+
 [Service]
 Type=oneshot
 ExecStart=/srv/railgun/network/start.sh
@@ -5,6 +9,5 @@ EnvironmentFile=/etc/railgun/profile
 WorkingDirectory=/srv/railgun/network
 RemainAfterExit=yes
 
-[Unit]
-Wants=network-online.target
-After=network-online.target
+[Install]
+WantedBy=multi-user.target
