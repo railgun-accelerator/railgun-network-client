@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 set -o errexit
+
+source /etc/railgun/profile
+
 if grep -q $1 hacks.csv; then
     sed -i "s/$1.*/$1,$2/" hacks.csv
 else
