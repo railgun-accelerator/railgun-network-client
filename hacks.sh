@@ -19,7 +19,7 @@ if [ -z "${gateway}" ] || [ -z "${next_hop}" ]; then
 fi
 
 if [ "${gateway}" = "${RAILGUN_ID}" ]; then
-    echo ip route add $1 via ${RAILGUN_GATEWAY}
+    ip route add $1 via ${RAILGUN_GATEWAY}
 else
-    echo ip route add $1 dev railgun${next_hop} src ${RAILGUN_ADDRESS} realm ${gateway}  advmss 1360
+    ip route add $1 dev railgun${next_hop} src ${RAILGUN_ADDRESS} realm ${gateway}  advmss 1360
 fi
