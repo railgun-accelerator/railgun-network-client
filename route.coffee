@@ -25,7 +25,7 @@ exec = (ipforce, ip, iptables)->
       console.log code
       iptables_exec iptables, true, (code)->
         console.log code
-          process.exit()
+        process.exit()
 
 module.exports =
   init: (server_id, servers, regions)->
