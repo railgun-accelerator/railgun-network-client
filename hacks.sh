@@ -6,16 +6,14 @@ set -o allexport
 source /etc/railgun/profile
 set +o allexport
 
-cd `dirname $0`
-
-if grep -q $1 hacks.csv; then
-    sed -i "s/$1.*/$1,$2/" hacks.csv
+if grep -q $1 /etc/railgun/hacks.csv; then
+    sed -i "s/$1.*/$1,$2/" /etc/railgun/hacks.csv
 else
-    echo $1,$2 >> hacks.csv
+    echo $1,$2 >> /etc/railgun/hacks.csv
 fi
 
-gateway=$(awk -F, "\$1 == $2 { print \$2 }" regions.csv)
-next_hop=$(awk -F, "\$1 == $2 { print \$3 }" regions.csv)
+gateway=$(awk -F, "\$1 == $2 { print \$2 }" /etc/railgun/regions.csv)
+next_hop=$(awk -F, "\$1 == $2 { print \$3 }" /etc/railgun/regions.csv)
 if [ -z "${gateway}" ] || [ -z "${next_hop}" ]; then
     echo "can't find route for region$2"
     exit 1

@@ -1,5 +1,6 @@
 fs = require 'fs'
 child_process = require 'child_process'
+csv = require 'csv'
 
 ip_exec = (commands, force=false, callback)->
   args = ['-batch', '-']
@@ -16,6 +17,15 @@ iptables_exec = (commands, noflush = false, callback )->
   result = (["*#{table}"].concat(rules, 'COMMIT').join("\n") for table, rules of commands when rules.length > 0).join("\n") + "\n"
   child.on 'close', callback
   child.stdin.end result
+
+exec = (ipforce, ip, iptables)->
+  ip_exec ipforce, true, (code)->
+    console.log code
+    ip_exec ip, false, (code)->
+      console.log code
+      iptables_exec iptables, true, (code)->
+        console.log code
+          process.exit()
 
 module.exports =
   init: (server_id, servers, regions)->
@@ -105,20 +115,23 @@ module.exports =
         else
           ip.push "route add #{address} advmss 1360 dev railgun#{servers[region.gateway].next_hop} src #{servers[server_id].host} realm #{region.gateway} table 101"
 
-    #console.log ipforce.join("\n")
-    #console.log '-'
-    ip_exec ipforce, true, (code)->
-      console.log code
-      #console.log error, stdout, stderr
-      #console.log ip.join("\n")
-      ip_exec ip, false, (code)->
-        #throw error if error
-        console.log code
-        iptables_exec iptables, true, (code)->
-          console.log code
-          #throw error if error
-          # save route to file, for hacks
-          # fs.writeFile 'servers.csv', ([server.id, server.next_hop].join(',') for server in servers when server.next_hop?).join("\n") # we don't need it now.
-          fs.writeFile 'regions.csv', ([region.id, region.gateway, servers[region.gateway].next_hop].join(',') for i, region of regions when region.gateway?).join("\n"), (error)->
-            throw error if error
-            process.exit()
+    # hacks
+    csv.stringify ([region.id, region.gateway, servers[region.gateway].next_hop] for i, region of regions when region.gateway?), (error, data)->
+      throw error if error
+      fs.writeFile '/etc/railgun/regions.csv', (error)->
+        throw error if error
+        fs.readFile '/etc/railgun/hacks.csv', (error, data)->
+          if data
+            csv.parse data, (error, data)->
+              if data
+                for hack in data
+                  [address,region_id] = hack
+                  region = regions[region_id]
+                  if region and region.gateway?
+                    if region.gateway == server_id
+                      ip.push "route replace #{address} via #{process.env.RAILGUN_GATEWAY} table 101"
+                    else
+                      ip.push "route add #{address} advmss 1360 dev railgun#{servers[region.gateway].next_hop} src #{servers[server_id].host} realm #{region.gateway} table 101"
+              exec(ipforce, ip, iptables)
+          else
+            exec(ipforce, ip, iptables)
