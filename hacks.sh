@@ -19,7 +19,7 @@ if [ -z "${gateway}" ] || [ -z "${next_hop}" ]; then
 fi
 
 if [ "${gateway}" = "${RAILGUN_ID}" ]; then
-    ip route add $1 via ${RAILGUN_GATEWAY} table 101
+    ip route replace $1 via ${RAILGUN_GATEWAY} table 101
 else
-    ip route add $1 dev railgun${next_hop} src ${RAILGUN_ADDRESS} realm ${gateway} advmss 1360 table 101
+    ip route replace $1 dev railgun${next_hop} src ${RAILGUN_ADDRESS} realm ${gateway} advmss 1360 table 101
 fi
