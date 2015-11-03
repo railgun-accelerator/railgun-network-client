@@ -1,3 +1,4 @@
+fs = require 'fs'
 child_process = require 'child_process'
 
 ip_exec = (commands, force=false, callback)->
@@ -116,4 +117,8 @@ module.exports =
         iptables_exec iptables, true, (code)->
           console.log code
           #throw error if error
-          process.exit()
+          # save route to file, for hacks
+          # fs.writeFile 'servers.csv', ([server.id, server.next_hop].join(',') for server in servers when server.next_hop?).join("\n") # we don't need it now.
+          fs.writeFile 'regions.csv', ([region.id, region.gateway, servers[region.gateway].next_hop].join(',') for region in regions when region.gateway?).join("\n"), (error)->
+            throw error if error
+            process.exit()
