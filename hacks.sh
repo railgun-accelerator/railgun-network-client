@@ -2,7 +2,10 @@
 
 set -o errexit
 
+set -o allexport
 source /etc/railgun/profile
+set +o allexport
+
 cd `dirname $0`
 
 if grep -q $1 hacks.csv; then
