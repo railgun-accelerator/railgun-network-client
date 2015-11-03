@@ -118,7 +118,7 @@ module.exports =
     # hacks
     csv.stringify ([region.id, region.gateway, servers[region.gateway].next_hop] for i, region of regions when region.gateway?), (error, data)->
       throw error if error
-      fs.writeFile '/etc/railgun/regions.csv', (error)->
+      fs.writeFile '/etc/railgun/regions.csv', data, (error)->
         throw error if error
         fs.readFile '/etc/railgun/hacks.csv', (error, data)->
           if data
