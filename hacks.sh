@@ -3,6 +3,7 @@
 set -o errexit
 
 source /etc/railgun/profile
+cd `dirname $0`
 
 if grep -q $1 hacks.csv; then
     sed -i "s/$1.*/$1,$2/" hacks.csv
