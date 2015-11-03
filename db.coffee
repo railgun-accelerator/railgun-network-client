@@ -11,6 +11,7 @@ module.exports =
           row.private_address ?= row.public_address
           row.tos = '0x' + row.tos.toString(16) if row.tos?
           servers[row.id] = row
+        servers[server_id].next_hop = server_id
         client.query 'SELECT * FROM links WHERE "from" = $1::smallint or "to" = $1::smallint', [server_id], (error, result) ->
           throw error if error
           for row in result.rows
