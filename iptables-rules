@@ -11,6 +11,7 @@
 COMMIT
 *mangle
 -A PREROUTING -s ${RAILGUN_ADDRESS}/16 -p tcp -m addrtype ! --dst-type LOCAL -j TPROXY --on-port 5000 --on-ip 0.0.0.0 --tproxy-mark 0x3
+-A PREROUTING -s 10.0.0.0/16 -p tcp -m addrtype ! --dst-type LOCAL -m tos --tos ${RAILGUN_TOS} -j TPROXY --on-port 5000 --on-ip 0.0.0.0 --tproxy-mark 0x3
 -A PREROUTING -s ${RAILGUN_ADDRESS}/16 ! -p tcp -j MARK --set-mark 0x1
 -A INPUT -s 10.${RAILGUN_ID}.32.0/20,10.${RAILGUN_ID}.64.0/20,10.${RAILGUN_ID}.176.0/20 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
 -A OUTPUT -d 10.${RAILGUN_ID}.32.0/20,10.${RAILGUN_ID}.64.0/20,10.${RAILGUN_ID}.176.0/20 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
