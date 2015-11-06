@@ -24,12 +24,3 @@ fi
 echo 'network...'
 
 coffee main.coffee
-
-# hack for strongswan
-
-ip route flush table 220
-ip route add 10.8.16.0/20 via ${RAILGUN_GATEWAY}  proto static table 220
-ip route add 10.8.32.0/20 via ${RAILGUN_GATEWAY}  proto static table 220
-ip route add 10.8.48.0/20 via ${RAILGUN_GATEWAY}  proto static table 220
-ip route add 10.8.64.0/20 via ${RAILGUN_GATEWAY}  proto static table 220
-ip route add 10.8.96.0/20 via ${RAILGUN_GATEWAY}  proto static table 220
