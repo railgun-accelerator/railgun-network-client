@@ -4,16 +4,18 @@
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports1 dst -j REDIRECT --to-ports 3128
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports2 dst -j REDIRECT --to-ports 3129
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports3 dst -j REDIRECT --to-ports 1080
--A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports3 dst -j ACCEPT
+-A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports4 dst -j ACCEPT 
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3100
 # socks5 dns hack
 -A OUTPUT -o ${RAILGUN_INTERFACE} -p udp --dport 53 -m owner --uid-owner proxy -j REDIRECT --to-ports 53
 -A POSTROUTING -o ${RAILGUN_INTERFACE} -s 10.0.0.0/8 -j SNAT --to-source ${RAILGUN_PRIVATE_ADDRESS}
 COMMIT
 *mangle
+-A PREROUTING -s ${RAILGUN_ADDRESS}/16 ! -d 10.0.0.0/8 -p tcp -m multiport --dports 9300,9301,9400 -j MARK --set-xmark 0x1/0xffffffff
+-A PREROUTING -s ${RAILGUN_ADDRESS}/16 ! -d 10.0.0.0/8 -p tcp -m multiport --dports 9300,9301,9400 -j ACCEPT
 -A PREROUTING -s ${RAILGUN_ADDRESS}/16 -p tcp -m addrtype ! --dst-type LOCAL -j TPROXY --on-port 5000 --on-ip 0.0.0.0 --tproxy-mark 0x3
 -A PREROUTING -s ${RAILGUN_ADDRESS}/16 ! -p tcp -j MARK --set-mark 0x1
--A INPUT -s 10.${RAILGUN_ID}.32.0/20,10.${RAILGUN_ID}.64.0/20,10.${RAILGUN_ID}.176.0/20 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
--A OUTPUT -d 10.${RAILGUN_ID}.32.0/20,10.${RAILGUN_ID}.64.0/20,10.${RAILGUN_ID}.176.0/20 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1361:1536 -j TCPMSS --set-mss 1360
+-A INPUT -s ${RAILGUN_ADDRESS}/16 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1301:1536 -j TCPMSS --set-mss 1300
+-A OUTPUT -d ${RAILGUN_ADDRESS}/16 -p tcp -m tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 1301:1536 -j TCPMSS --set-mss 1300
 -A POSTROUTING -o ${RAILGUN_INTERFACE} -j TOS --set-tos 0x3c
 COMMIT

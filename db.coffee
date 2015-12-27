@@ -42,7 +42,7 @@ module.exports =
                 regions[row.region_id].addresses.push row.address
               reachable_servers = (server.id for i, server of servers when server.link?)
               reachable_servers.push server_id
-              client.query 'SELECT DISTINCT ON (region_id) region_id, server_id FROM gateways WHERE server_id = ANY($1::smallint[]) ORDER BY region_id, delay', [reachable_servers], (error, result) ->
+              client.query 'SELECT DISTINCT ON (region_id) region_id, server_id FROM gateways WHERE server_id = ANY($1::smallint[]) ORDER BY region_id, server_id = $2::smallint DESC, delay', [reachable_servers, server_id], (error, result) ->
                 throw error if error
                 for row in result.rows
                   regions[row.region_id].gateway = row.server_id
@@ -53,7 +53,8 @@ module.exports =
                     servers[21].next_hop = 20
                     servers[22].next_hop = 20
                     servers[23].next_hop = 20
-                    #regions[1].gateway = 23
+                    regions[0].gateway = 21
+                    regions[1].gateway = 23
                   when 1, 9
                     servers[20].next_hop = 8
                     servers[21].next_hop = 8
