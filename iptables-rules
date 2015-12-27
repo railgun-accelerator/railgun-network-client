@@ -4,6 +4,7 @@
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports1 dst -j REDIRECT --to-ports 3128
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports2 dst -j REDIRECT --to-ports 3129
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports3 dst -j REDIRECT --to-ports 1080
+-A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports3 dst -j ACCEPT
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3100
 # socks5 dns hack
 -A OUTPUT -o ${RAILGUN_INTERFACE} -p udp --dport 53 -m owner --uid-owner proxy -j REDIRECT --to-ports 53
