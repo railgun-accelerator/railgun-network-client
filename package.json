@@ -2,6 +2,9 @@
   "name": "railgun-network-client",
   "version": "1.0.0",
   "description": "",
+  "scripts":{
+    "start": "coffee main.coffee"
+  },
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -15,6 +18,7 @@
   "homepage": "https://github.com/railgun-accelerator/railgun-network-client#readme",
   "dependencies": {
     "pg": "latest",
-    "csv": "latest"
+    "csv": "latest",
+    "coffee-script": "latest"
   }
 }

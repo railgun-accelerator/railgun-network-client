@@ -34,3 +34,4 @@ echo 'network...'
 coffee main.coffee
 ip route flush cache
 
+sleep 1000d
