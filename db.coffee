@@ -53,8 +53,8 @@ module.exports =
                     servers[21].next_hop = 20
                     servers[22].next_hop = 20
                     servers[23].next_hop = 20
-                    regions[0].gateway = 21
-                    regions[1].gateway = 23
+                    regions[0].gateway = 4
+                    regions[1].gateway = 9
                   when 1, 9
                     servers[20].next_hop = 8
                     servers[21].next_hop = 8

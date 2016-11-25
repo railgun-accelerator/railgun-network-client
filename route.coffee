@@ -111,7 +111,7 @@ module.exports =
     for i, region of regions when region.gateway?
       for address in region.addresses
         if region.gateway == server_id
-          ip.push "route add #{address} via #{process.env.RAILGUN_GATEWAY} table 101"
+          ip.push "route add #{address} via #{process.env.RAILGUN_GATEWAY} dev #{process.env.RAILGUN_INTERFACE} table 101"
         else
           ip.push "route add #{address} advmss 1360 dev railgun#{servers[region.gateway].next_hop} src #{servers[server_id].host} realm #{region.gateway} table 101"
 

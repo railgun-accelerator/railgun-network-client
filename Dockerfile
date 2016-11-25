@@ -1,6 +1,6 @@
 FROM node
 RUN apt-get update
-RUN apt-get install -y kmod
+RUN apt-get install -y kmod ipset gettext
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 

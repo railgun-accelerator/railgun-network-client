@@ -6,6 +6,10 @@ echo 'modprobe fou...'
 
 modprobe fou
 
+echo 'ipsec...'
+
+bash /etc/railgun/ipsec.sh
+
 echo 'ipset...'
 
 ipset create -exist ports1 bitmap:port range 10000-32767
@@ -31,7 +35,7 @@ ip route replace 10.${RAILGUN_ID}.96.0/20 via ${RAILGUN_GATEWAY}
 
 echo 'network...'
 
-coffee main.coffee
+npm start
 ip route flush cache
 
 sleep 1000d
