@@ -23,7 +23,7 @@ echo 'iptables...'
 envsubst < iptables-rules | iptables-restore
 
 if [ -n "${RAILGUN_TOS}" ]; then
-    iptables -t mangle -A PREROUTING -s 10.0.0.0/16 -p tcp -m addrtype ! --dst-type LOCAL -m tos --tos ${RAILGUN_TOS} -j TPROXY --on-port 5000 --on-ip 0.0.0.0 --tproxy-mark 0x3
+    iptables -t mangle -A PREROUTING -s 10.0.0.0/12 -p tcp -m addrtype ! --dst-type LOCAL -m tos --tos ${RAILGUN_TOS} -j TPROXY --on-port 5000 --on-ip 0.0.0.0 --tproxy-mark 0x3
 fi
 
 echo 'strongswan hack'

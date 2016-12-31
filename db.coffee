@@ -60,5 +60,8 @@ module.exports =
                     servers[21].next_hop = 8
                     servers[22].next_hop = 8
                     servers[23].next_hop = 8
+                  when 6
+                    regions[0].gateway=5
+                    regions[1].gateway=9
                 done()
                 callback servers, regions
