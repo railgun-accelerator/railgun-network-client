@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/railgun-accelerator/railgun-network-client#readme",
   "dependencies": {
-    "pg": "latest",
+    "pg": "^6",
     "csv": "latest",
     "coffee-script": "latest"
   }

@@ -1,4 +1,4 @@
-FROM node
+FROM node:stretch
 RUN apt-get update
 RUN apt-get install -y kmod ipset gettext
 RUN mkdir -p /usr/src/app
