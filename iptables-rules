@@ -40,11 +40,11 @@ COMMIT
 *nat
 -A POSTROUTING -s 172.16.0.0/12 ! -o docker0 -j MASQUERADE
 -A PREROUTING -p tcp -m set --match-set block_ip src -j REDIRECT --to-ports 3101
--A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m multiport --dports 22,443,3000,1723,5001,5201 -j ACCEPT
+-A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m multiport --dports 22,450,3000,1723,5001,5201 -j ACCEPT
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports1 dst -j REDIRECT --to-ports 3128
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports2 dst -j REDIRECT --to-ports 3129
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports3 dst -j REDIRECT --to-ports 1080
--A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports4 dst -j ACCEPT 
+-A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -m set --match-set ports4 dst -j ACCEPT
 -A PREROUTING -i ${RAILGUN_INTERFACE} -p tcp -m addrtype --dst-type LOCAL -j REDIRECT --to-ports 3100
 # socks5 dns hack
 -A OUTPUT -o ${RAILGUN_INTERFACE} -p udp --dport 53 -m owner --uid-owner proxy -j REDIRECT --to-ports 53
